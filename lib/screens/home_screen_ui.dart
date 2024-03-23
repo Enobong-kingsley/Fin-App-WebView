@@ -49,23 +49,35 @@ class _HomeScreenState extends State<HomeScreen> {
       );
   }
 
+  Future<bool> _onBackPressed() async {
+    if (await controller.canGoBack()) {
+      await controller.goBack();
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          !internetDisconnected
-              ? WebViewWidget(
-                  controller: controller,
-                )
-              : const ErrorScreen(),
-          if (loadingPercentage < 100)
-            const Center(
-              child: CircularProgressIndicator(
-                  // value: loadingPercentage / 100.0,
-                  ),
-            ),
-        ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            !internetDisconnected
+                ? WebViewWidget(
+                    controller: controller,
+                  )
+                : const ErrorScreen(),
+            if (loadingPercentage < 100)
+              const Center(
+                child: CircularProgressIndicator(
+                    // value: loadingPercentage / 100.0,
+                    ),
+              ),
+          ],
+        ),
       ),
     );
   }
